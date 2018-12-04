@@ -1,0 +1,92 @@
+body{
+    background-color: aliceblue;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 30px;
+}
+
+
+header {
+    background-color: rgb(40, 76, 109);
+    background-image: url('bg.jpg');
+    background-repeat: no-repeat;
+    background-size: 150px 150px;
+    background-position: left;
+    background-position-x: 10px;
+    color:rgb(224, 240, 255);
+    padding: 20px;
+    text-align: center;
+    font-size: 30px;
+    font-family: cursive;
+}
+
+.main-content ul{
+     list-style: none;
+     text-align: center;
+}
+.main-content ul li{
+
+    padding: 20px;
+    background-color: rgb(40, 76, 109);
+    color:rgb(224, 240, 255);
+    border-radius: 10px;
+    margin: 10px 0;
+    text-align: center;
+    border-spacing: 20px;
+    border-style: outset;
+
+
+}
+
+footer{
+
+    background-color: rgb(40, 76, 109);
+    color:rgb(224, 240, 255);
+    padding: 20px;
+    text-align: center;
+    font-family: cursive;
+    bottom: 0%;
+    width: 100%;
+    height: 150px;
+    position: fixed;
+    text-align: center;
+}
+
+footer form input,textarea {
+    border: none;
+    border-bottom: 3px solid white;
+    outline: none;
+    background-color: rgb(40, 76, 109);
+    color:rgb(224, 240, 255);
+    font-size: 20px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    display: flow-root;
+    text-align: center;
+    width: 300px;
+    margin: 0 auto;
+    padding: 10px;
+    bottom: 0%;
+}
+
+footer form button {
+
+    margin-top: 15px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 17px;
+    background-color: rgb(65, 121, 173);
+    color:rgb(224, 240, 255);
+    border-radius: 14px;
+    cursor: pointer;
+    box-shadow: 0 5px lightcyan;
+    display: inline-block;
+    margin-left: 15px;
+}
+
+footer form button:hover {
+    background-color: rgb(40, 76, 109);
+}
+
+footer form button:active {
+    background-color: rgb(40, 76, 109);
+    box-shadow: 0 1px #666;
+  transform: translateY(4px);
+}
