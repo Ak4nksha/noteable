@@ -19,6 +19,10 @@ header {
     font-family: cursive;
 }
 
+.main-content{
+    margin: 20px;
+}
+
 .main-content ul{
      list-style: none;
      text-align: center;
@@ -37,7 +41,7 @@ header {
 
 }
 
-footer{
+.add-note {
 
     background-color: rgb(40, 76, 109);
     color:rgb(224, 240, 255);
@@ -47,7 +51,7 @@ footer{
     bottom: 0%;
     width: 100%;
     height: 150px;
-    position: fixed;
+    position: absolute;
     text-align: center;
 }
 
