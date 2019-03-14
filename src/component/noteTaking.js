@@ -7,10 +7,11 @@ class NoteTaking extends Component {
     constructor(props){
         super(props);
 
-        this.state = {
+        var savedState = localStorage.getItem("state");
+        this.state = (!savedState)?{
             items: [],
             show: false,
-        }
+        } : savedState;
 
         this.currentNote = "";
         this.currentTitle = "";
@@ -55,6 +56,8 @@ class NoteTaking extends Component {
 
         this.setState({ items : currentNotes });
         
+        localStorage.setItem("state", this.state);
+
         this.theTitle.value = "";
         this.theNote.value = "";
         this.currentTitle = "";
