@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React,  { Component }  from 'react';
 import Modal from 'react-bootstrap/Modal';
 import { TiDocumentAdd, TiDocumentDelete, TiEdit } from "react-icons/ti";
 import Card from 'react-bootstrap/Card';
@@ -9,10 +9,13 @@ class NoteTaking extends Component {
 
         this.state = {
             items: [],
-            show: false
+            show: false,
         }
 
-        this.addNote = this.addNote.bind(this);
+        this.currentNote = "";
+        this.currentTitle = "";
+
+        this.addEditNote = this.addEditNote.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.handleShow = this.handleShow.bind(this);
     }
@@ -28,7 +31,7 @@ class NoteTaking extends Component {
     deleteNote(idx){
       var currentNotes = this.state.items;
       currentNotes.splice(idx, 1);
-      this.setState((prevState) => {
+      this.setState(() => {
           return{
               items: currentNotes
           }
@@ -36,8 +39,8 @@ class NoteTaking extends Component {
       console.log(this.state);
     }
     
-    addNote(event){
-        console.log(this.theIndex);
+    addEditNote(event){
+        console.log(this.currentTitle.length)
         if(this.theTitle.value !== "")
         {
             var newItem = {
@@ -45,16 +48,20 @@ class NoteTaking extends Component {
                 note: this.theNote.value
             };
         }
-        this.setState((prevState) => {
+        var currentNotes = this.state.items;
+        if(this.currentTitle.length > 0) {
+          currentNotes.splice(this.theIndex, 1, newItem)
+         }  
+
+        this.setState(() => {
             return{
-                items: (this.theIndex) ? prevState.items.splice(this.theIndex, 1, newItem) : prevState.items.concat(newItem)
-            }
+                items: (this.currentTitle.length > 0) ? currentNotes : currentNotes.concat(newItem) }
         });
         
         this.theTitle.value = "";
         this.theNote.value = "";
         this.theIndex = undefined;
-        console.log("this.state.items");
+        console.log(this.state.items);
         this.handleClose();
 
         event.preventDefault();
@@ -63,8 +70,8 @@ class NoteTaking extends Component {
     
     initializeEdit(idx){
       this.theIndex = idx;
-      this.theNote = this.state.items[idx].note;
-      this.theTitle = this.state.items[idx].title;
+      this.currentNote = this.state.items[idx].note;
+      this.currentTitle = this.state.items[idx].title;
       this.handleShow();
     }
 
@@ -79,15 +86,17 @@ class NoteTaking extends Component {
             <Modal.Title>Add Note</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-          <form onSubmit={this.addNote}>
+          <form onSubmit={this.addEditNote}>
               <input 
               type="text" 
               placeholder="Title"
-              ref={(title) => this.theTitle = title}  
+              ref={(title) => this.theTitle = title}
+              defaultValue = {this.currentTitle}
               />
               <textarea 
               placeholder="Enter text"
               ref={(note) => this.theNote=note}
+              defaultValue = {this.currentNote}
               />
               <button type="submit">Add Note</button>
           </form>
