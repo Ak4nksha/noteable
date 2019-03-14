@@ -33,6 +33,7 @@ class NoteTaking extends Component {
       var currentNotes = this.state.items;
       currentNotes.splice(idx, 1);
       this.setState( {items: currentNotes});
+      localStorage.setItem("state", this.state);
       console.log(this.state);
     }
     
