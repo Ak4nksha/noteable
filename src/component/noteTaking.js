@@ -31,16 +31,12 @@ class NoteTaking extends Component {
     deleteNote(idx){
       var currentNotes = this.state.items;
       currentNotes.splice(idx, 1);
-      this.setState(() => {
-          return{
-              items: currentNotes
-          }
-      });
+      this.setState( {items: currentNotes});
       console.log(this.state);
     }
     
     addEditNote(event){
-        console.log(this.currentTitle.length)
+      console.log(this.theNote.value);
         if(this.theTitle.value !== "")
         {
             var newItem = {
@@ -49,17 +45,20 @@ class NoteTaking extends Component {
             };
         }
         var currentNotes = this.state.items;
+
+        // Current Title is available only on edit
         if(this.currentTitle.length > 0) {
           currentNotes.splice(this.theIndex, 1, newItem)
-         }  
+         } else{
+           currentNotes = currentNotes.concat(newItem)
+         }
 
-        this.setState(() => {
-            return{
-                items: (this.currentTitle.length > 0) ? currentNotes : currentNotes.concat(newItem) }
-        });
+        this.setState({ items : currentNotes });
         
         this.theTitle.value = "";
         this.theNote.value = "";
+        this.currentTitle = "";
+        this.currentNote = "";
         this.theIndex = undefined;
         console.log(this.state.items);
         this.handleClose();
@@ -92,7 +91,7 @@ class NoteTaking extends Component {
               placeholder="Title"
               ref={(title) => this.theTitle = title}
               defaultValue = {this.currentTitle}
-              />
+              required/>
               <textarea 
               placeholder="Enter text"
               ref={(note) => this.theNote=note}
@@ -110,7 +109,9 @@ class NoteTaking extends Component {
               <Card.Body>
                 <Card.Title>{val.title}</Card.Title>
                 <Card.Text>
-                  {val.note}
+                  {val.note.split("\n").map((i) => {
+            return <div>{i}</div>;
+        })}
                 </Card.Text>
                 <Card.Link href="#" ><TiEdit onClick={() => this.initializeEdit(idx)} /></Card.Link>
                 <Card.Link href="#"><TiDocumentDelete onClick = {() => this.deleteNote(idx)} /></Card.Link>
