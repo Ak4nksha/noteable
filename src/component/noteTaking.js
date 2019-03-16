@@ -8,10 +8,10 @@ class NoteTaking extends Component {
         super(props);
 
         var savedState = localStorage.getItem("state");
-        this.state = (!savedState)?{
-            items: [],
+        this.state = {
+            items: (!savedState) ? [] : JSON.parse(savedState),
             show: false,
-        } : savedState;
+        }
 
         this.currentNote = "";
         this.currentTitle = "";
@@ -33,8 +33,9 @@ class NoteTaking extends Component {
       var currentNotes = this.state.items;
       currentNotes.splice(idx, 1);
       this.setState( {items: currentNotes});
-      localStorage.setItem("state", this.state);
       console.log(this.state);
+
+      localStorage.setItem("state", JSON.stringify(currentNotes));
     }
     
     addEditNote(event){
@@ -57,8 +58,6 @@ class NoteTaking extends Component {
 
         this.setState({ items : currentNotes });
         
-        localStorage.setItem("state", this.state);
-
         this.theTitle.value = "";
         this.theNote.value = "";
         this.currentTitle = "";
@@ -68,6 +67,7 @@ class NoteTaking extends Component {
         this.handleClose();
 
         event.preventDefault();
+        localStorage.setItem("state", JSON.stringify(currentNotes));
 
     }
     
