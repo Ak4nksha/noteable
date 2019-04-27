@@ -1,5 +1,6 @@
 import React,  { Component }  from 'react';
 import Modal from 'react-bootstrap/Modal';
+import $ from 'jquery';
 import { TiDocumentAdd, TiDocumentDelete, TiEdit } from "react-icons/ti";
 import Card from 'react-bootstrap/Card';
 
@@ -8,17 +9,42 @@ class NoteTaking extends Component {
         super(props);
 
         var savedState = localStorage.getItem("state");
+        var savedRequests = localStorage.getItem("requests")
         this.state = {
             items: (!savedState) ? [] : JSON.parse(savedState),
+            requests:  (!savedRequests) ? {} : JSON.parse(savedRequests),
             show: false,
         }
 
+        this.Url = "https://p1mmduuq11.execute-api.us-east-1.amazonaws.com/dev/notes"
         this.currentNote = "";
         this.currentTitle = "";
+        this.currentID = "";
 
         this.addEditNote = this.addEditNote.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.handleShow = this.handleShow.bind(this);
+        var self = this
+        window.addEventListener('online', function(event){
+          self.syncWithApi()
+        })
+        if(navigator.onLine){
+          self.syncWithApi()
+        }
+    }
+
+    syncWithApi() {
+      var self = this;
+      for(var id in this.state.requests){
+        if(this.state.requests.hasOwnProperty(id)){
+          $.ajax({url: self.Url, type: self.state.requests[id].type, contentType: 'application/json',
+          data: self.state.requests[id].type == "DELETE" ? id : JSON.stringify(self.state.requests[id].data)})
+        }
+      }
+      $.ajax({url: this.Url, type: "GET", success: function(response){
+        self.setState({ items: response.notes });
+      }})
+      localStorage.removeItem("requests")
     }
 
     handleClose() {
@@ -30,35 +56,67 @@ class NoteTaking extends Component {
       }    
 
     deleteNote(idx){
+      var self = this
       var currentNotes = this.state.items;
+      var currentRequests = this.state.requests;
+      if(navigator.onLine){
+        $.ajax({url: this.Url, type: "DELETE", contentType: "application/json", data: this.state.items[idx].id, success: function(response){
+          self.syncWithApi()
+        }})
+      }else{
+        isNaN(this.state.items[idx].id) ? 
+            currentRequests[this.state.items[idx].id] = {"type": "DELETE", "data": this.state.items[idx].id}
+            : delete currentRequests[this.state.items[idx].id]
+      }
       currentNotes.splice(idx, 1);
-      this.setState( {items: currentNotes});
+      this.setState( {items: currentNotes, requests: currentRequests});
       console.log(this.state);
 
       localStorage.setItem("state", JSON.stringify(currentNotes));
+      
+      localStorage.setItem("requests", JSON.stringify(currentRequests));
     }
     
     addEditNote(event){
+      var self = this
       console.log(this.theNote.value);
         if(this.theTitle.value !== "")
         {
             var newItem = {
+                id : this.theId.value,
                 title: this.theTitle.value,
                 note: this.theNote.value
             };
         }
         var currentNotes = this.state.items;
-
+        var type = "";
         // Current Title is available only on edit
         if(this.currentTitle.length > 0) {
           currentNotes.splice(this.theIndex, 1, newItem)
+          type = "PUT"
          } else{
+          newItem.id = this.state.requests.length + 1
            currentNotes = currentNotes.concat(newItem)
+           type = "POST"
          }
-
-        this.setState({ items : currentNotes });
+         var currentRequests = this.state.requests;
+        if(navigator.onLine){
+          $.ajax({url: this.Url, type: type, data: JSON.stringify(newItem), contentType: "application/json", success: function(result, status){
+            if(status==200 && type == "POST"){
+              currentNotes.pop();
+              newItem.id = result;
+              currentNotes = currentNotes.concat(newItem)
+              self.syncWithApi()
+            }
+          }})
+        } else {
+          type = isNaN(newItem.id) ? "PUT" : "POST"
+            currentRequests[newItem.id] = {"type": type, "data": newItem}
+        }
+        this.setState({ items : currentNotes, requests: currentRequests });
         
         this.theTitle.value = "";
+        this.theId.value = "";
         this.theNote.value = "";
         this.currentTitle = "";
         this.currentNote = "";
@@ -68,6 +126,7 @@ class NoteTaking extends Component {
 
         event.preventDefault();
         localStorage.setItem("state", JSON.stringify(currentNotes));
+        localStorage.setItem("requests", JSON.stringify(currentRequests))
 
     }
     
@@ -75,6 +134,7 @@ class NoteTaking extends Component {
       this.theIndex = idx;
       this.currentNote = this.state.items[idx].note;
       this.currentTitle = this.state.items[idx].title;
+      this.currentID = this.state.items[idx].id;
       this.handleShow();
     }
 
@@ -90,6 +150,10 @@ class NoteTaking extends Component {
           </Modal.Header>
           <Modal.Body>
           <form onSubmit={this.addEditNote}>
+              <input type="hidden"
+              ref={(id) => this.theId=id}
+              defaultValue = {this.currentID}
+              />
               <input 
               type="text" 
               placeholder="Title"
