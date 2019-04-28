@@ -9,7 +9,7 @@ class NoteTaking extends Component {
         super(props);
 
         var savedState = localStorage.getItem("state");
-        var savedRequests = localStorage.getItem("requests")
+        var savedRequests = localStorage.getItem("requests");
         this.state = {
             items: (!savedState) ? [] : JSON.parse(savedState),
             requests:  (!savedRequests) ? {} : JSON.parse(savedRequests),
@@ -25,10 +25,10 @@ class NoteTaking extends Component {
         this.handleClose = this.handleClose.bind(this);
         this.handleShow = this.handleShow.bind(this);
         var self = this
-        window.addEventListener('online', function(event){
+        window.addEventListener('online', function(event){  //down to up
           self.syncWithApi()
         })
-        if(navigator.onLine){
+        if(navigator.onLine){   //browser property
           self.syncWithApi()
         }
     }
@@ -95,7 +95,7 @@ class NoteTaking extends Component {
           currentNotes.splice(this.theIndex, 1, newItem)
           type = "PUT"
          } else{
-          newItem.id = this.state.requests.length + 1
+          newItem.id = Object.keys(this.state.requests).length + 1
            currentNotes = currentNotes.concat(newItem)
            type = "POST"
          }
